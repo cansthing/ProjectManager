@@ -1,0 +1,32 @@
+﻿<ui:ContentDialog x:Class="ProjectManager.View.CreateProject"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectManager.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+                  xmlns:vm="clr-namespace:ProjectManager.ViewModel"
+                  Title="Projekt anlegen"
+                  PrimaryButtonText="Speichern"
+                  CloseButtonText="Abbrechen"
+                  DefaultButton="Primary"
+                  PrimaryButtonCommand="{Binding SaveProjectCommand}">
+    <ui:ContentDialog.DataContext>
+        <vm:ProjectsViewViewModel x:Name="VM"/>
+    </ui:ContentDialog.DataContext>
+    <Grid>
+        <ui:SimpleStackPanel Spacing="5">
+            <AccessText Text="Name"/>
+            <TextBox Text="{Binding NewProject.Title}"/>
+
+            <AccessText Text="Verantwortlich"/>
+            <ui:AutoSuggestBoxListView SelectedItem="{Binding NewProject.Responsibility}" ItemsSource="{Binding Users}"/>
+
+            <AccessText Text="Beschreibung" />
+            <TextBox AcceptsReturn="True"
+                     Text="{Binding NewProject.Description}"/>
+        </ui:SimpleStackPanel> 
+    </Grid>
+</ui:ContentDialog>

@@ -6,9 +6,12 @@
         xmlns:local="clr-namespace:ProjectManager"
         mc:Ignorable="d"
         xmlns:ui="http://schemas.modernwpf.com/2019"
-        Title="MainWindow" Height="450" Width="800"
-        ui:WindowHelper.UseModernWindowStyle="True">
-    <Grid>
-        
-    </Grid>
+        xmlns:vm="clr-namespace:ProjectManager.ViewModel"
+        Title="Projekt Manager" Height="450" Width="800"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:MainViewModel x:Name="MainViewModel"/>
+    </Window.DataContext>
+    <UserControl Content="{Binding UserControl}"/>
 </Window>

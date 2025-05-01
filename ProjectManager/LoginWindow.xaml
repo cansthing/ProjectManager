@@ -8,9 +8,9 @@
         xmlns:vm="clr-namespace:ProjectManager.ViewModel"
         xmlns:ui="http://schemas.modernwpf.com/2019"
         Title="LoginWindow" Height="450" Width="400"
-        ui:WindowHelper.UseModernWindowStyle="True"
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" Topmost="True">
     <Window.DataContext>
         <vm:LoginWindowViewModel x:Name="LoginViewModel"/>
     </Window.DataContext>
@@ -72,6 +72,6 @@
         <Button Grid.Row="6" Grid.Column="0"
                 Content="Login" Style="{StaticResource AccentButtonStyle}" Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch" Margin="5" VerticalAlignment="Center" x:Name="btn_Login"
-                Click="btn_Login_Click"/>
+                Click="btn_Login_Click" KeyDown="btn_Login_KeyDown"/>
     </Grid>
 </Window>

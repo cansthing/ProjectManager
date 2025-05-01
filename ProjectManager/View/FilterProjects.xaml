@@ -1,0 +1,33 @@
+﻿<ui:ContentDialog x:Class="ProjectManager.View.FilterProjects"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                  xmlns:local="clr-namespace:ProjectManager.View"
+                  mc:Ignorable="d" 
+                  d:DesignHeight="450" d:DesignWidth="800"
+                  xmlns:ui="http://schemas.modernwpf.com/2019"
+                  
+                  Title="Projekte filtern"
+                  PrimaryButtonText="Anwenden"
+                  DefaultButton="Primary"
+                  CloseButtonText="Abbrechen">
+    <Grid Background="White">
+        <GroupBox Header="Filter">
+            <ui:RadioButtons>
+                <RadioButton Content="Alle Projekte" IsChecked="True"/>
+                <RadioButton Content="Meine Projekte"/>
+                <RadioButton>
+                    <RadioButton.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Projekte von " VerticalAlignment="Center"/>
+                            <ComboBox>
+                                
+                            </ComboBox>
+                        </StackPanel>
+                    </RadioButton.Content>
+                </RadioButton>
+            </ui:RadioButtons>
+        </GroupBox>
+    </Grid>
+</ui:ContentDialog>

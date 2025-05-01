@@ -1,0 +1,75 @@
+﻿using ModernWpf.Controls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace ProjectManager.View
+{
+	/// <summary>
+	/// Interaction logic for MainView.xaml
+	/// </summary>
+	public partial class MainView : UserControl
+	{
+        private Stack<UserControl> navigationStack = new Stack<UserControl>();
+        public MainView()
+		{
+			InitializeComponent();
+		}
+
+		private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+		{
+			string content = (sender.SelectedItem as NavigationViewItem).Tag?.ToString();
+			if (string.IsNullOrEmpty(content)) return;
+			switch (content)
+			{
+				case "Start":
+					NavigateTo(new StartView());
+					break;
+				case "Projects":
+                    NavigateTo(new ProjectsView());
+					break;
+				case "ToDos":
+                    NavigateTo(new MyAssignmentsView());
+					break;
+				case "OwnAccount":
+                    NavigateTo(new SettingsView());
+					break;
+				case "Settings":
+					NavigateTo(new SettingsView());
+                    break;
+				default:
+					NavigateTo(new StartView());
+					break;
+			}
+		}
+
+        private void NavigateTo(UserControl newControl)
+        {
+            if (WindowContent.Content is UserControl currentControl)
+            {
+                navigationStack.Push(currentControl);
+            }
+
+            WindowContent.Content = newControl;
+        }
+
+        private void NavigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            if (navigationStack.Count > 0)
+            {
+                WindowContent.Content = navigationStack.Pop();
+            }
+        }
+    }
+}

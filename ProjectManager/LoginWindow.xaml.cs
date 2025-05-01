@@ -26,6 +26,18 @@ namespace ProjectManager
 
         private async void btn_Login_Click(object sender, RoutedEventArgs e)
         {
+            await TryToLogin();
+        }
+
+        private async void btn_Login_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                await TryToLogin();
+            }
+        }
+        private async Task TryToLogin()
+        {
             LoginViewModel.Password = password.Password;
             if (await ObjectRepository.DataProvider.Login(new Model.User(LoginViewModel.Username, LoginViewModel.Password)))
             {
@@ -34,7 +46,7 @@ namespace ProjectManager
             else
             {
                 MessageText.Visibility = Visibility.Visible;
-                await Task.Delay(5000);
+                await Task.Delay(1500);
                 MessageText.Visibility = Visibility.Collapsed;
             }
         }
