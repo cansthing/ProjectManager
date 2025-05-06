@@ -6,8 +6,10 @@
              xmlns:local="clr-namespace:ProjectManager.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
              xmlns:vm="clr-namespace:ProjectManager.ViewModel"
-             xmlns:ui="http://schemas.modernwpf.com/2019">
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             FocusManager.FocusedElement="{Binding ElementName=WindowContent}">
     <Grid>
         <ui:NavigationView SelectionChanged="NavigationView_SelectionChanged" Header="Projektmanagement"
                            IsSettingsVisible="False" BackRequested="NavigationView_BackRequested" IsBackEnabled="True" >
@@ -24,10 +26,7 @@
                 <ui:NavigationViewItem Icon="Contact" Content="Account" Tag="OwnAccount"/>
                 <ui:NavigationViewItem Icon="Setting" Content="Einstellungen" Tag="Settings"/>
             </ui:NavigationView.FooterMenuItems>
-            <ui:NavigationView.AutoSuggestBox>
-                <ui:AutoSuggestBox PlaceholderText="Suche..."/>
-            </ui:NavigationView.AutoSuggestBox>
-            <ContentControl x:Name="WindowContent"/>
+            <ContentControl x:Name="WindowContent" Background="Transparent"/>
         </ui:NavigationView>
     </Grid>
 </UserControl>

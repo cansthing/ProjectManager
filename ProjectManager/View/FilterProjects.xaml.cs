@@ -1,4 +1,6 @@
 ﻿using ModernWpf.Controls;
+using ProjectManager.DataProvider;
+using ProjectManager.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +23,35 @@ namespace ProjectManager.View
     /// </summary>
     public partial class FilterProjects : ContentDialog
     {
-        public FilterProjects()
+        private ProjectsViewViewModel ViewModel;
+        public FilterProjects(ProjectsViewViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
+            ViewModel = viewModel;
+        }
+
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            SetFilter();
+        }
+        private void SetFilter()
+        {
+            switch (radioButtons.SelectedIndex)
+            {
+                case 9:
+                    ViewModel.ProjectFilter = ProjectFilter.No;
+                    break;
+                case 1:
+                    ViewModel.ProjectFilter = ProjectFilter.MyProjects;
+                    break;
+                case 2:
+                    ViewModel.ProjectFilter = ProjectFilter.ProjectFrom;
+                    break;
+                default:
+                    ViewModel.ProjectFilter = ProjectFilter.No;
+                    break;
+            }
         }
     }
 }

@@ -37,28 +37,27 @@ namespace ProjectManager
         //        MessageBox.Show("Fehler: " + ex.Message);
         //    }
         //}
+
         public static void Senden()
         {
-                var email = new MimeMessage();
-                email.From.Add(new MailboxAddress("PM", "warenwirtschaft-cvl@outlook.com"));
-                email.To.Add(new MailboxAddress("Josua Löwen", "josua@l-en.de"));
-                email.Subject = "Automatische E-Mail mit MailKit";
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress("PM", "warenwirtschaft-cvl@outlook.com"));
+            email.To.Add(new MailboxAddress("Josua Löwen", "josua@l-en.de"));
+            email.Subject = "Automatische E-Mail mit MailKit";
             email.Body = new TextPart("html")
             {
                 Text = "Dies ist eine automatisch gesendete E-Mail mit MailKit.",
-                
             };
 
-                using (var smtp = new SmtpClient())
-                {
-                    smtp.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
-                    smtp.Authenticate("warenwirtschaft-cvl@outlook.com", "WarenwirtschaftCVL2015!");
-                    smtp.Send(email);
-                    smtp.Disconnect(true);
-                }
-
-                Console.WriteLine("E-Mail erfolgreich gesendet!");
+            using (var smtp = new SmtpClient())
+            {
+                smtp.Connect("smtp.office365.com", 587, SecureSocketOptions.StartTls);
+                smtp.Authenticate("", "!");
+                smtp.Send(email);
+                smtp.Disconnect(true);
             }
-        
+
+            Console.WriteLine("E-Mail erfolgreich gesendet!");
+        }
     }
 }

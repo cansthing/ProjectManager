@@ -1,7 +1,5 @@
-﻿using ProjectManager.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,17 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ProjectManager
+namespace ProjectManager.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MyAccount.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MyAccountView : UserControl
     {
-        public MainWindow()
+        public MyAccountView()
         {
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.ShowDialog();
             InitializeComponent();
         }
     }

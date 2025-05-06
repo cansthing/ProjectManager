@@ -8,25 +8,26 @@
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:ui="http://schemas.modernwpf.com/2019"
                   xmlns:vm="clr-namespace:ProjectManager.ViewModel"
+                  d:DataContext="{d:DesignInstance Type=vm:ProjectsViewViewModel}"
                   Title="Projekt anlegen"
                   PrimaryButtonText="Speichern"
                   CloseButtonText="Abbrechen"
                   DefaultButton="Primary"
                   PrimaryButtonCommand="{Binding SaveProjectCommand}">
-    <ui:ContentDialog.DataContext>
-        <vm:ProjectsViewViewModel x:Name="VM"/>
-    </ui:ContentDialog.DataContext>
-    <Grid>
+    <ui:ContentDialog.Background>
+        <SolidColorBrush Color="White" Opacity="0.6"/>
+    </ui:ContentDialog.Background>
+    <ui:ScrollViewerEx>
         <ui:SimpleStackPanel Spacing="5">
             <AccessText Text="Name"/>
             <TextBox Text="{Binding NewProject.Title}"/>
 
             <AccessText Text="Verantwortlich"/>
-            <ui:AutoSuggestBoxListView SelectedItem="{Binding NewProject.Responsibility}" ItemsSource="{Binding Users}"/>
-
+            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding Users}"
+                      SelectedItem="{Binding NewProject.Responsibility}"/>
             <AccessText Text="Beschreibung" />
             <TextBox AcceptsReturn="True"
                      Text="{Binding NewProject.Description}"/>
         </ui:SimpleStackPanel> 
-    </Grid>
+    </ui:ScrollViewerEx>
 </ui:ContentDialog>

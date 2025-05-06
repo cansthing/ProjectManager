@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ProjectManager.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#FF789EDC">
-        <Label Content="Einstellungen" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="44"/>
+    <Grid>
+        <local:UserManagement/>
     </Grid>
 </UserControl>

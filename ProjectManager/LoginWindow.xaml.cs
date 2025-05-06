@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +21,7 @@ namespace ProjectManager
     /// </summary>
     public partial class LoginWindow : Window
     {
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -38,10 +41,15 @@ namespace ProjectManager
         }
         private async Task TryToLogin()
         {
+            LoginViewModel.IsBusy = true;
             LoginViewModel.Password = password.Password;
-            if (await ObjectRepository.DataProvider.Login(new Model.User(LoginViewModel.Username, LoginViewModel.Password)))
+
+            bool loginSuccess = await Task.Run(async () =>
+                await ObjectRepository.DataProvider.Login(new Model.User(LoginViewModel.Username, LoginViewModel.Password)));
+
+            if (loginSuccess)
             {
-                this.Close();
+                Dispatcher.Invoke(() => this.Close());
             }
             else
             {
@@ -49,6 +57,16 @@ namespace ProjectManager
                 await Task.Delay(1500);
                 MessageText.Visibility = Visibility.Collapsed;
             }
+
+            LoginViewModel.IsBusy = false;
+        }
+
+        private async void DataFalse()
+        {
+
+            MessageText.Visibility = Visibility.Visible;
+            await Task.Delay(1500);
+            MessageText.Visibility = Visibility.Collapsed;
         }
     }
 }

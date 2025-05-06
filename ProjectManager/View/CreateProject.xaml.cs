@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using ProjectManager.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +22,10 @@ namespace ProjectManager.View
     /// </summary>
     public partial class CreateProject : ContentDialog
     {
-        public CreateProject()
+        public CreateProject(ProjectsViewViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
     }
 }

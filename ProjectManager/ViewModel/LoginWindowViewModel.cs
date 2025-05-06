@@ -18,6 +18,17 @@ namespace ProjectManager.ViewModel
         public string Username { get; set; }
         public string Password { get; set; }
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged();
+            }
+        }
+
         public LoginWindowViewModel()
         {
             

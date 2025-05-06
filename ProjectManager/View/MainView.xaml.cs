@@ -34,21 +34,27 @@ namespace ProjectManager.View
 			switch (content)
 			{
 				case "Start":
+					sender.Header = "Projektmanager";
 					NavigateTo(new StartView());
 					break;
 				case "Projects":
+					sender.Header = "Projekte";
                     NavigateTo(new ProjectsView());
 					break;
 				case "ToDos":
+					sender.Header = "Meine Aufgaben";
                     NavigateTo(new MyAssignmentsView());
 					break;
 				case "OwnAccount":
-                    NavigateTo(new SettingsView());
+					sender.Header = "Accounteinstellungen";
+                    NavigateTo(new MyAccountView());
 					break;
 				case "Settings":
+					sender.Header = "Einstellungen";
 					NavigateTo(new SettingsView());
                     break;
 				default:
+					sender.Header = "Projektmanager";
 					NavigateTo(new StartView());
 					break;
 			}

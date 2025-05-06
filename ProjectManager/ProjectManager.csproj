@@ -97,12 +97,14 @@
     <Compile Include="AppConfiguration.cs" />
     <Compile Include="Commands\MyICommand.cs" />
     <Compile Include="Converter\SelectionToBool.cs" />
+    <Compile Include="Helper\ImageHelper.cs" />
     <Compile Include="Model\Assignment.cs" />
     <Compile Include="DataProvider\IDataProvider.cs" />
     <Compile Include="DataProvider\RestDataProvider.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="ViewModel\AccountViewModel.cs" />
     <Compile Include="ViewModel\LoginWindowViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ProjectsViewViewModel.cs" />
@@ -118,6 +120,9 @@
     </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MyAccountView.xaml.cs">
+      <DependentUpon>MyAccountView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MyAssignmentsView.xaml.cs">
       <DependentUpon>MyAssignmentsView.xaml</DependentUpon>
@@ -167,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MyAccountView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

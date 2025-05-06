@@ -2,6 +2,7 @@
 using ProjectManager.Model;
 using ProjectManager.Properties;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.SqlClient;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace ProjectManager.DataProvider
@@ -26,7 +28,7 @@ namespace ProjectManager.DataProvider
         public async Task<bool> CreateUser(User user)
         {
             user.Password = EncryptionHelper.EncryptString(user.Password);
-            string query = "INSERT INTO Users (Firstname, Lastname, Email, Phone, Username, Password, IsAdmin) VALUES (@Firstname, @Lastname, @Email, @Phone, @Username, @Password, @IsAdmin)";
+            string query = "INSERT INTO Users (Firstname, Lastname, Email, Phone, Username, Password, IsAdmin, Image) VALUES (@Firstname, @Lastname, @Email, @Phone, @Username, @Password, @IsAdmin, @Image)";
             using(SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
             using(SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -37,8 +39,10 @@ namespace ProjectManager.DataProvider
                 cmd.Parameters.AddWithValue("@Username", (object)user.Username ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Password", (object)user.Password ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@IsAdmin", (object)user.IsAdmin);
+                cmd.Parameters.AddWithValue("@Image", (object)user.Image != null ? (object)ImageHelper.ImageSourceToBinary(user.Image) : DBNull.Value); 
                 await conn.OpenAsync();
                 int a = await cmd.ExecuteNonQueryAsync();
+                conn.Close();
                 return a != 0;
             }
         }
@@ -50,8 +54,9 @@ namespace ProjectManager.DataProvider
         /// <returns></returns>
         public async Task<bool> UpdateUser(User user)
         {
+            bool mustUpdateCurrentUser = user.Id == CurrentUser.Id;
             user.Password = EncryptionHelper.EncryptString(user.Password);
-            string query = "UPDATE Users SET Firstname = @Firstname, Lastname = @Lastname, Email = @Email, Phone = @Phone, Username = @Username, Password = @Password, IsAdmin = @IsAdmin WHERE Id = @Id";
+            string query = "UPDATE Users SET Firstname = @Firstname, Lastname = @Lastname, Email = @Email, Phone = @Phone, Username = @Username, Password = @Password, IsAdmin = @IsAdmin, Image = @Image WHERE Id = @Id";
             using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
@@ -64,8 +69,10 @@ namespace ProjectManager.DataProvider
                 cmd.Parameters.AddWithValue("@Username", (object)user.Username ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Password", (object)user.Password ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@IsAdmin", (object)user.IsAdmin);
+                cmd.Parameters.AddWithValue("@Image", user.Image != null ? (object)ImageHelper.ImageSourceToBinary(user.Image) : DBNull.Value); 
                 await conn.OpenAsync();
                 int a = await cmd.ExecuteNonQueryAsync();
+                currentUser = await GetUser(user.Id);
                 return a != 0;
             }
         }
@@ -83,6 +90,7 @@ namespace ProjectManager.DataProvider
             {
                 await conn.OpenAsync();
                 int a = await cmd.ExecuteNonQueryAsync();
+                conn.Close();
                 return a != 0;
             }
         }
@@ -113,27 +121,27 @@ namespace ProjectManager.DataProvider
             }
 
             using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                await conn.OpenAsync();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    await conn.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    User user = new User()
                     {
-                        User user = new User()
-                        {
-                            Id = reader.GetInt32(0),
-                            Firstname = reader.IsDBNull(1) ? null : reader.GetString(1),
-                            Lastname = reader.IsDBNull(2) ? null : reader.GetString(2),
-                            Email = reader.IsDBNull(3) ? null : reader.GetString(3),
-                            Phone = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            Username = reader.IsDBNull(5) ? null : reader.GetString(5),
-                            Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
-                            IsAdmin = reader.GetBoolean(7)
-                        };
-                        Users.Add(user);
-                    }
-                } 
+                        Id = reader.GetInt32(0),
+                        Firstname = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        Lastname = reader.IsDBNull(2) ? null : reader.GetString(2),
+                        Email = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        Phone = reader.IsDBNull(4) ? null : reader.GetString(4),
+                        Username = reader.IsDBNull(5) ? null : reader.GetString(5),
+                        Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
+                        IsAdmin = reader.GetBoolean(7),
+                        Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)
+                    };
+                    Users.Add(user);
+                }
+                conn.Close();
             } 
 
             return Users;
@@ -191,10 +199,12 @@ namespace ProjectManager.DataProvider
                         Phone = reader.IsDBNull(4) ? null : reader.GetString(4),
                         Username = reader.IsDBNull(5) ? null : reader.GetString(5),
                         Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
-                        IsAdmin = reader.GetBoolean(7)
+                        IsAdmin = reader.GetBoolean(7),
+                        Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)
                     };
                     fullUser = newuser;
                 }
+                conn.Close();
             }
             return fullUser;
         }
@@ -220,10 +230,12 @@ namespace ProjectManager.DataProvider
                         Phone = reader.IsDBNull(4) ? null : reader.GetString(4),
                         Username = reader.IsDBNull(5) ? null : reader.GetString(5),
                         Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
-                        IsAdmin = reader.GetBoolean(7)
+                        IsAdmin = reader.GetBoolean(7),
+                        Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)
                     };
                     fullUser = newuser;
                 }
+                conn.Close();
             }
             return fullUser;
         }
@@ -234,8 +246,13 @@ namespace ProjectManager.DataProvider
             using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
+                cmd.Parameters.AddWithValue("@Title", (object)project1.Title);
+                cmd.Parameters.AddWithValue("@Responsibility", (object)project1.Responsibility.Id);
+                cmd.Parameters.AddWithValue("@Description", (object)project1.Description);
                 await conn.OpenAsync();
-                return await cmd.ExecuteNonQueryAsync() >0;
+                int i= await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+                return i > 0;
             }
         }
 
@@ -245,8 +262,15 @@ namespace ProjectManager.DataProvider
             using(SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
             using(SqlCommand cmd = new SqlCommand(query, conn))
             {
+                cmd.Parameters.AddWithValue("@Id", (object)project.Id);
+                cmd.Parameters.AddWithValue("@Title", (object)project.Title);
+                cmd.Parameters.AddWithValue("@Responsibility", (object)project.Responsibility.Id);
+                cmd.Parameters.AddWithValue("@End", (object)project.End);
+                cmd.Parameters.AddWithValue("@Description", (object)project.Description);
                 await conn.OpenAsync();
-                return await cmd.ExecuteNonQueryAsync() > 0;
+                int i= await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+                return i > 0;
             }
         }
 
@@ -257,19 +281,28 @@ namespace ProjectManager.DataProvider
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
                 await conn.OpenAsync();
-                return await cmd.ExecuteNonQueryAsync() > 0;
+                int i= await cmd.ExecuteNonQueryAsync();
+                conn.Close();
+                return i > 0;
             }
         }
-
-        public async Task<ObservableCollection<Project>> GetProjects(ProjectFilter projectFilter = ProjectFilter.No)
+        public async Task<ObservableCollection<Project>> GetProjects()
         {
-            string query = "SELECT * FROM FROM Projects";
+            return await GetProjects(ProjectFilter.No);
+        }
+        public async Task<ObservableCollection<Project>> GetProjects(ProjectFilter projectFilter, User user = null)
+        {
+            string query = "SELECT * FROM Projects";
             switch(projectFilter)
             {
                 case ProjectFilter.No:
+                    query = "SELECT * FROM Projects;";
                     break;
                 case ProjectFilter.MyProjects:
                     query = $"SELECT * FROM Projects WHERE Responsibility = '{currentUser.Id}'";
+                    break;
+                case ProjectFilter.ProjectFrom:
+                    query = $"SELECT * FROM Projects WHERE Responsibility = '{user.Id}'";
                     break;
 
             }
@@ -277,6 +310,7 @@ namespace ProjectManager.DataProvider
             using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
+                await conn.OpenAsync();
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -286,40 +320,165 @@ namespace ProjectManager.DataProvider
                         Title = reader.IsDBNull(1) ? null : reader.GetString(1),
                         Responsibility = await GetUser(reader.GetInt32(2)),
                         Start = reader.GetDateTime(3),
-                        End = reader.GetDateTime(4),
+                        End = reader.IsDBNull(4) ? DateTime.MinValue : reader.GetDateTime(4),
                         Description = reader.IsDBNull(5) ? null : reader.GetString(5),
-                        MyAssignments = await GetMyAssignments(CurrentUser)
+                        MyAssignments = await GetAssignments(CurrentUser)
                     };
                     projects.Add(project);
                 }
             }
             return projects;
         }
-
+        public async Task<Project> GetProject(int id)
+        {
+            string query = $"SELECT * FROM Projects WHERE Id = {id}";
+            using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                await conn.OpenAsync();
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        return new Project
+                        {
+                            Id = reader.GetInt32(0),
+                            Title = reader.IsDBNull(1) ? null : reader.GetString(1),
+                            Responsibility = await GetUser(reader.GetInt32(2)),
+                            Start = reader.GetDateTime(3),
+                            End = reader.IsDBNull(4) ? DateTime.MinValue : reader.GetDateTime(4),
+                            Description = reader.IsDBNull(5) ? null : reader.GetString(5),
+                            MyAssignments = await GetAssignments(CurrentUser)
+                        };
+                    }
+                }
+            }
+            return null; 
+        }
         public async Task<bool> IsMyProject(Project project)
         {
             await Task.Delay(0);
             return project.Responsibility.Id == currentUser.Id;
         }
 
-        public Task<bool> CreateAssignment(Assignment assignment)
+        public async Task<bool> CreateAssignment(Assignment assignment)
         {
-            throw new NotImplementedException();
+            string query = "INSERT INTO Assignments (Project, User, Title, Description, DueDate, ProgressPercent) VALUES (@Project, @User, @Title, @Description, @DueDate, ProgressPercent)";
+            using(SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using(SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Project", assignment.Project.Id);
+                cmd.Parameters.AddWithValue("@User", assignment.User.Id);
+                cmd.Parameters.AddWithValue("@Title", assignment.Title ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@DueDate", assignment.DueDate == null ? (object)DBNull.Value : assignment.DueDate);
+                cmd.Parameters.AddWithValue("@ProgressPercent", assignment.ProgressPercent);
+                await conn.OpenAsync();
+                return await cmd.ExecuteNonQueryAsync() > 0;
+            }
         }
 
-        public Task<bool> UpdateAssignment(Assignment assignment)
+        public async Task<bool> UpdateAssignment(Assignment assignment)
         {
-            throw new NotImplementedException();
+            string query = "UPDATE Assignments SET ";
+            using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Project", assignment.Project.Id);
+                cmd.Parameters.AddWithValue("@User", assignment.User.Id);
+                cmd.Parameters.AddWithValue("@Title", assignment.Title ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@DueDate", assignment.DueDate == null ? (object)DBNull.Value : assignment.DueDate);
+                cmd.Parameters.AddWithValue("@ProgressPercent", assignment.ProgressPercent);
+                cmd.Parameters.AddWithValue("@Id", assignment.Id);
+
+                await conn.OpenAsync();
+                return await cmd.ExecuteNonQueryAsync() > 0;
+            }
         }
 
-        public Task<bool> DeleteAssignment(Assignment assignment)
+        public async Task<bool> DeleteAssignment(Assignment assignment)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FORM Assignemnts WHERE Id = @Id";
+            using(SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using(SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Id", assignment.Id);
+                await conn.OpenAsync();
+                return await cmd.ExecuteNonQueryAsync() > 0;
+            }
         }
-
-        public Task<ObservableCollection<Assignment>> GetMyAssignments(User user, AssignmentFilter assignmentFilter = AssignmentFilter.No)
+        public async Task<ObservableCollection<Assignment>> GetAssignments(Project project)
         {
-            throw new NotImplementedException();
+            string query = $"SELECT * FROM Assignments WHERE Project = {project.Id}";
+            ObservableCollection<Assignment> assignments = new ObservableCollection<Assignment>();
+            using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    Assignment assignment = new Assignment()
+                    {
+                        Id = reader.GetInt32(0),
+                        Project = await GetProject(reader.GetInt32(1)),
+                        User = await GetUser(reader.GetInt32(2)),
+                        Title = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        Description = reader.IsDBNull(4) ? null : reader.GetString(4),
+                        ProgressPercent = reader.GetInt32(5),
+                        AssignDate = reader.GetDateTime(6),
+                        DueDate = reader.IsDBNull(7) ? DateTime.MinValue : reader.GetDateTime(7),
+                        Priority = (Priority)Enum.Parse(typeof(Priority), reader.GetString(8))
+                    };
+                    assignments.Add(assignment);
+                }
+            }
+            return assignments;
+        }
+        public async Task<ObservableCollection<Assignment>> GetAssignments(User user, AssignmentFilter assignmentFilter = AssignmentFilter.No)
+        {
+            string query = "SELECT * FROM Assignments";
+            switch (assignmentFilter)
+            {
+                case AssignmentFilter.No:
+                    query = $"SELECT * FROM Assignments WHERE User = {user.Id}";
+                    break;
+                case AssignmentFilter.Priorität_Hoch:
+                    query = $"SELECT * FROM Assignments WHERE User = {user.Id} AND Priority = {Priority.Hoch.ToString()}";
+                    break;
+                case AssignmentFilter.Priorität_Mittel:
+                    query = $"SELECT * FROM Assignments WHERE User = {user.Id} AND Priority = {Priority.Mittel.ToString()}";
+                    break;
+                case AssignmentFilter.Priorität_Niedrig:
+                    query = $"SELECT * FROM Assignments WHERE User = {user.Id} AND Priority = {Priority.Niedrig.ToString()}";
+                    break;
+                default:
+                    query = $"SELECT * FROM Assignments WHERE User = {user.Id}";
+                    break;
+            }
+            ObservableCollection<Assignment> assignments = new ObservableCollection<Assignment>();
+            using(SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using(SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    Assignment assignment = new Assignment()
+                    {
+                        Id = reader.GetInt32(0),
+                        Project = await GetProject(reader.GetInt32(1)),
+                        User = await GetUser(reader.GetInt32(2)),
+                        Title = reader.IsDBNull(3) ? null : reader.GetString(3),
+                        Description = reader.IsDBNull(4) ? null : reader.GetString(4),
+                        ProgressPercent = reader.GetInt32(5),
+                        AssignDate = reader.GetDateTime(6),
+                        DueDate = reader.IsDBNull(7) ? DateTime.MinValue : reader.GetDateTime(7),
+                        Priority = (Priority)Enum.Parse(typeof(Priority), reader.GetString(8))
+                    };
+                    assignments.Add(assignment);
+                }
+            }
+            return assignments;
         }
     }
 }

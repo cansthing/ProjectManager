@@ -17,26 +17,34 @@
     <ui:ContentDialog.DataContext>
         <vm:UserManagementViewModel x:Name="VM"/>
     </ui:ContentDialog.DataContext>
-    <ui:SimpleStackPanel Spacing="6">
-        <Label Content="Administrator"/>
-        <ui:ToggleSwitch IsOn="{Binding NewUser.IsAdmin}"/>
-        
-        <Label Content="Vorname"/>
-        <TextBox Text="{Binding NewUser.Firstname}"/>
+    <ui:ScrollViewerEx>
+        <ui:SimpleStackPanel Spacing="6">
+            <Label Content="Administrator"/>
+            <ui:ToggleSwitch IsOn="{Binding NewUser.IsAdmin}"/>
 
-        <Label Content="Nachname"/>
-        <TextBox Text="{Binding NewUser.Lastname}"/>
+            <Label Content="Profilbild"/>
+            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="15">
+                <ui:PersonPicture ProfilePicture="{Binding NewUser.Image}" Width="60"/>
+                <Button Grid.Column="1" Content="Ändern" Click="Button_Click"/>
+            </ui:SimpleStackPanel>
 
-        <Label Content="Email"/>
-        <TextBox Text="{Binding NewUser.Email}"/>
+            <Label Content="Vorname"/>
+            <TextBox Text="{Binding NewUser.Firstname}"/>
 
-        <Label Content="Telefon"/>
-        <TextBox Text="{Binding NewUser.Phone}"/>
+            <Label Content="Nachname"/>
+            <TextBox Text="{Binding NewUser.Lastname}"/>
 
-        <Label Content="Benutzername"/>
-        <TextBox Text="{Binding NewUser.Username}"/>
+            <Label Content="Email"/>
+            <TextBox Text="{Binding NewUser.Email}"/>
 
-        <Label Content="Passwort"/>
-        <PasswordBox x:Name="password"/>
-    </ui:SimpleStackPanel>
+            <Label Content="Telefon"/>
+            <TextBox Text="{Binding NewUser.Phone}"/>
+
+            <Label Content="Benutzername"/>
+            <TextBox Text="{Binding NewUser.Username}"/>
+
+            <Label Content="Passwort"/>
+            <PasswordBox x:Name="password"/>
+        </ui:SimpleStackPanel>
+    </ui:ScrollViewerEx>
 </ui:ContentDialog>

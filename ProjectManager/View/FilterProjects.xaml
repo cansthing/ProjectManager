@@ -7,24 +7,35 @@
                   mc:Ignorable="d" 
                   d:DesignHeight="450" d:DesignWidth="800"
                   xmlns:ui="http://schemas.modernwpf.com/2019"
-                  
+                  xmlns:vm="clr-namespace:ProjectManager.ViewModel"
+                  d:DataContext="{d:DesignInstance Type=vm:ProjectsViewViewModel}"
                   Title="Projekte filtern"
                   PrimaryButtonText="Anwenden"
+                  PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                   DefaultButton="Primary"
                   CloseButtonText="Abbrechen">
-    <Grid Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
         <GroupBox Header="Filter">
-            <ui:RadioButtons>
-                <RadioButton Content="Alle Projekte" IsChecked="True"/>
-                <RadioButton Content="Meine Projekte"/>
-                <RadioButton>
+            <ui:RadioButtons Name="radioButtons" >
+                <RadioButton Content="Alle Projekte" IsChecked="True" GroupName="filter"/>
+                <RadioButton Content="Meine Projekte" GroupName="filter"/>
+                <RadioButton GroupName="filter">
                     <RadioButton.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Projekte von " VerticalAlignment="Center"/>
-                            <ComboBox>
-                                
+                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
+                            <Label Content="Projekte von " VerticalAlignment="Center" />
+                            <ComboBox SelectedIndex="0" ItemsSource="{Binding Users}" 
+                                      SelectedItem="{Binding SelectedFilterUser}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Fullname}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
                             </ComboBox>
-                        </StackPanel>
+                        </ui:SimpleStackPanel>
                     </RadioButton.Content>
                 </RadioButton>
             </ui:RadioButtons>
