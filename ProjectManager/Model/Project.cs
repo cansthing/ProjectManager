@@ -16,6 +16,7 @@ namespace ProjectManager.Model
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string Description { get; set; }
+        public ObservableCollection<Assignment> Assignments { get; set; }
         public ObservableCollection<Assignment> MyAssignments { get; set; }
 
         public override string ToString()

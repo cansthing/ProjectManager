@@ -35,11 +35,25 @@ namespace ProjectManager
             }
         }
 
+        private static bool notificationServiceAlreadySet = false;
+        private static ISendNotification notificationService;
+        public static ISendNotification NotificationService
+        {
+            get => notificationService;
+            set
+            {
+                if (notificationServiceAlreadySet) return;
+                else notificationService = value;
+                notificationServiceAlreadySet = true;
+            }
+        }
+
 
         static ObjectRepository()
         {
             DataProvider = new RestDataProvider();
             AppConfiguration = new AppConfiguration();
+            NotificationService = new EmailService();
         }
     }
 }

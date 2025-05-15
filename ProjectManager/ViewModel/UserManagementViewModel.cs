@@ -22,7 +22,10 @@ namespace ProjectManager.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
+        public bool CanCurrentUser
+        {
+            get => ObjectRepository.DataProvider.CurrentUser.IsAdmin;
+        }
         private ObservableCollection<User> users;
         public ObservableCollection<User> Users
         {
@@ -107,6 +110,7 @@ namespace ProjectManager.ViewModel
                 return;
             }
             await ObjectRepository.DataProvider.DeleteUser(SelectedUser);
+            LoadUsers();
         }
 
 

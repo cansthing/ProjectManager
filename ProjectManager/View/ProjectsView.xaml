@@ -32,6 +32,7 @@
         <ui:ListView Grid.Row="2" ItemsSource="{Binding Projects}"
                           d:ItemsSource="{d:SampleData ItemCount=2}"
                      SelectedItem="{Binding SelectedProject}"
+                     SelectedIndex="{Binding SelectedProjectIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      Name="l_projects">
             <ui:ListView.ItemTemplate>
                 <DataTemplate>
@@ -47,8 +48,37 @@
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
-            
-            <TabControl Grid.Row="1" TabStripPlacement="Left" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Label Content="{Binding SelectedProject.Title}" FontSize="24"
+                       Grid.Column="0" Grid.ColumnSpan="3"/>
+                
+                <ui:ProgressBar Value="{Binding Progress, Mode=OneWay}" Grid.Column="2" Grid.ColumnSpan="2"/>
+
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
+                        <Run Text="Beginn: "/>
+                        <Run Text="{Binding SelectedProject.Start}"/>
+                        <LineBreak/>
+                        <Run Text="Verantwortlich: "/>
+                        <Run Text="{Binding SelectedProject.Responsibility.Fullname, Mode=OneWay}"/>
+                </TextBlock>
+                <TextBlock Text="{Binding SelectedProject.Description}"
+                           Grid.Row="2" Grid.ColumnSpan="3" Grid.RowSpan="3"
+                           TextWrapping="WrapWithOverflow"/>
+            </Grid>
+            <TabControl Grid.Row="1" TabStripPlacement="Left">
                 <TabItem Header="Aufgaben">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -56,21 +86,21 @@
                             <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
                         <ui:CommandBar>
-                            <ui:AppBarButton Icon="Add"/>
-                            <ui:AppBarButton Icon="Edit"/>
-                            <ui:AppBarButton Icon="Delete"/>
+                            <ui:AppBarButton Icon="Add" Command="{Binding CreateAssignmentCommand}"/>
+                            <ui:AppBarButton Icon="Edit" Command="{Binding EditAssignmentCommand}"/>
+                            <ui:AppBarButton Icon="Delete" Command="{Binding DeleteAssignmentCommand}"/>
                             <ui:AppBarButton Icon="Sort"/>
                         </ui:CommandBar>
-                        <ui:ListView Grid.Row="1">
+                        <ui:ListView Grid.Row="1" ItemsSource="{Binding SelectedProject.Assignments}">
                             
                         </ui:ListView>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Kommentare">
-                    
+
                 </TabItem>
                 <TabItem Header="Änderungsprotokoll">
-                    
+
                 </TabItem>
             </TabControl>
         </Grid>

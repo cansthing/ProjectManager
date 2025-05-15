@@ -97,23 +97,33 @@
     <Compile Include="AppConfiguration.cs" />
     <Compile Include="Commands\MyICommand.cs" />
     <Compile Include="Converter\SelectionToBool.cs" />
+    <Compile Include="DataProvider\EmailService.cs" />
+    <Compile Include="DataProvider\ISendNotification.cs" />
+    <Compile Include="Helper\HtmlHelper.cs" />
     <Compile Include="Helper\ImageHelper.cs" />
     <Compile Include="Model\Assignment.cs" />
     <Compile Include="DataProvider\IDataProvider.cs" />
     <Compile Include="DataProvider\RestDataProvider.cs" />
-    <Compile Include="Email.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="ViewModel\AccountViewModel.cs" />
     <Compile Include="ViewModel\LoginWindowViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MyAssignmentsViewModel.cs" />
     <Compile Include="ViewModel\ProjectsViewViewModel.cs" />
+    <Compile Include="ViewModel\StartViewViewModel.cs" />
     <Compile Include="ViewModel\UserManagementViewModel.cs" />
+    <Compile Include="View\CreateAssignment.xaml.cs">
+      <DependentUpon>CreateAssignment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CreateProject.xaml.cs">
       <DependentUpon>CreateProject.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\CreateUser.xaml.cs">
       <DependentUpon>CreateUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FilterAssignments.xaml.cs">
+      <DependentUpon>FilterAssignments.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\FilterProjects.xaml.cs">
       <DependentUpon>FilterProjects.xaml</DependentUpon>
@@ -159,11 +169,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CreateAssignment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CreateProject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CreateUser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FilterAssignments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -244,6 +262,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

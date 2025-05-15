@@ -14,9 +14,6 @@
                   CloseButtonText="Abbrechen"
                   DefaultButton="Primary"
                   PrimaryButtonCommand="{Binding SaveProjectCommand}">
-    <ui:ContentDialog.Background>
-        <SolidColorBrush Color="White" Opacity="0.6"/>
-    </ui:ContentDialog.Background>
     <ui:ScrollViewerEx>
         <ui:SimpleStackPanel Spacing="5">
             <AccessText Text="Name"/>

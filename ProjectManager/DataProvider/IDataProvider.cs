@@ -50,11 +50,22 @@ namespace ProjectManager.DataProvider
         MyProjects,
         ProjectFrom 
     }
+    public enum Priority
+    {
+        Niedrig,
+        Mittel,
+        Hoch
+    }
     public enum AssignmentFilter
     {
         No,
         Priorität_Hoch,
         Priorität_Mittel,
         Priorität_Niedrig
+    }
+    public enum AssignmentOrder
+    {
+        Project,
+        Priority
     }
 }

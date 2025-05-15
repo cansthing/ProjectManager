@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManager.DataProvider;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +18,11 @@ namespace ProjectManager.Model
         public DateTime DueDate { get; set; }
         public Priority Priority { get; set; }
         public int ProgressPercent { get; set; }
+
+        public override string ToString()
+        {
+            return Title ?? "";
+        }
     }
-    public enum Priority
-    {
-        Niedrig,
-        Mittel,
-        Hoch
-    }
+
 }

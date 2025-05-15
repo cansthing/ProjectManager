@@ -34,7 +34,11 @@ namespace ProjectManager.ViewModel
                 Title = "Account bearbeiten"
             };
             await dialog.ShowAsync();
-            await ObjectRepository.DataProvider.UpdateUser(CurrentUser);
+            try
+            {
+                await ObjectRepository.DataProvider.UpdateUser(CurrentUser);
+            }
+            catch { }
         }
 
         public AccountViewModel()

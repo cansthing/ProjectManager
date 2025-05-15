@@ -1,0 +1,44 @@
+﻿<ui:ContentDialog x:Class="ProjectManager.View.CreateAssignment"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectManager.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:vm="clr-namespace:ProjectManager.ViewModel"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+                  xmlns:v="clr-namespace:ProjectManager.Model"
+                  d:DataContext="{d:DesignInstance Type=vm:ProjectsViewViewModel}"
+                  Title="Aufgabe erstellen"
+                  PrimaryButtonText="Speichern"
+                  PrimaryButtonCommand="{Binding SaveAssignmentCommand}"
+                  CloseButtonText="Abbrechen"
+                  DefaultButton="Primary">
+    <ui:ScrollViewerEx>
+        <ui:SimpleStackPanel Spacing="5 ">
+            <AccessText Text="Titel"/>
+            <TextBox Text="{Binding NewAssignment.Title}"/>
+
+            <AccessText Text="Beschreibung"/>
+            <TextBox Text="{Binding NewAssignment.Description}"
+                     TextWrapping="WrapWithOverflow" AcceptsReturn="True"/>
+
+            <AccessText Text="Fälligkeitsdatum"/>
+            <DatePicker HorizontalAlignment="Stretch" IsTodayHighlighted="True" 
+                        SelectedDate="{Binding NewAssignment.DueDate}"/>
+
+            <AccessText Text="Person"/>
+            <ComboBox HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding NewAssignment.User}"
+                      ItemsSource="{Binding Users}"/>
+
+            <AccessText Text="Priorität"/>
+            <ComboBox HorizontalAlignment="Stretch"
+                      SelectedItem="{Binding NewAssignment.Priority, Mode=TwoWay}"
+                      SelectedIndex="1"
+                      ItemsSource="{Binding Priorities}"/>
+
+        </ui:SimpleStackPanel>
+    </ui:ScrollViewerEx>
+</ui:ContentDialog>

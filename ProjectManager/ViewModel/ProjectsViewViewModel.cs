@@ -1,4 +1,5 @@
-﻿using ProjectManager.Commands;
+﻿using MimeKit.Cryptography;
+using ProjectManager.Commands;
 using ProjectManager.DataProvider;
 using ProjectManager.Model;
 using ProjectManager.View;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,7 +24,10 @@ namespace ProjectManager.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
+        public bool CanCurrentUser
+        {
+            get => ObjectRepository.DataProvider.CurrentUser.IsAdmin;
+        }
         private ObservableCollection<Project> projects;
         public ObservableCollection<Project> Projects
         {
@@ -49,6 +54,16 @@ namespace ProjectManager.ViewModel
                 OnPropertyChanged();
             }
         }
+
+        private int selectedProjectIndex = 0;
+        public int SelectedProjectIndex
+        {
+            get { return selectedProjectIndex; }
+            set { selectedProjectIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private ObservableCollection<User> users;
         public ObservableCollection<User> Users
@@ -77,8 +92,56 @@ namespace ProjectManager.ViewModel
 
         public FilterProjects FilterDialog { get; set; }
 
+        private Assignment newAssignment;
+        public Assignment NewAssignment
+        {
+            get { return newAssignment; }
+            set { newAssignment = value;
+                OnPropertyChanged();
+            }
+        }
+        public Array Priorities => Enum.GetValues(typeof(Priority));
+        private Assignment selectedAssignment;
+        public Assignment SelectedAssignment
+        {
+            get { return selectedAssignment; }
+            set { selectedAssignment = value;
+                OnPropertyChanged();
+            }
+        }
 
+        public int Progress
+        {
+            get
+            {
+                if (SelectedProject == null) return 0;
+                int S = 0;
+                int W = 0;
+                foreach (var ass in SelectedProject.Assignments)
+                {
+                    S += ass.ProgressPercent * PriorityToInt(ass.Priority.ToString());
+                    W += PriorityToInt(ass.Priority.ToString());
+                }
+                if (W != 0)
+                    return S / W;
+                return 0;
+            }
 
+        }
+        private int PriorityToInt(string priority)
+        {
+            switch (priority)
+            {
+                case "Hoch":
+                    return 3;
+                case "Mittel":
+                    return 2;
+                case "Niedrig":
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
 
         public ICommand CreateProjectCommand  => new MyICommand(CreateProject);
         public ICommand EditProjectCommand => new MyICommand(EditProject);
@@ -86,14 +149,23 @@ namespace ProjectManager.ViewModel
         public ICommand DeleteProjectCommand => new MyICommand(DeleteProject);
         public ICommand FilterProjectsCommand => new MyICommand(FilterProjects);
 
+        public ICommand CreateAssignmentCommand => new MyICommand(CreateAssignmentC);
+        public ICommand EditAssignmentCommand => new MyICommand(EditAssignment);
+        public ICommand SaveAssignmentCommand => new MyICommand(SaveAssignment);
+        public ICommand DeleteAssignmentCommand => new MyICommand(DeleteAssignment);
+
+
         public ProjectsViewViewModel()
         {
             NewProject = new Project();
             FilterDialog =  new FilterProjects(this);
+            NewAssignment = new Assignment();
             LoadProjects();
         }
         private async void LoadProjects(ProjectFilter filter = ProjectFilter.No)
         {
+            int index = SelectedProjectIndex;
+            Project selected = SelectedProject;
             switch (filter)
             {
                 case ProjectFilter.No:
@@ -104,14 +176,28 @@ namespace ProjectManager.ViewModel
                     break;
                 case ProjectFilter.ProjectFrom:
                     Projects = await ObjectRepository.DataProvider.GetProjects(filter, SelectedFilterUser);
-                    break;
+                 break;
             }
+            if (selected == null) return;
+            int newIndex = 0;
+            for (int i = 0; i < Projects.Count; i++)
+            {
+                if (Projects[i].Id == selected.Id)
+                {
+                    newIndex = i;
+                }
+            }
+            SelectedProjectIndex = newIndex;
+            OnPropertyChanged(nameof(SelectedProjectIndex));
         }
-
+        private async void LoadUsers()
+        {
+            Users = await ObjectRepository.DataProvider.GetUsers();
+        }
         private async void CreateProject(object obj)
         {
             NewProject = new Project();
-            Users = await ObjectRepository.DataProvider.GetUsers();
+            LoadUsers();
             var dialog = new CreateProject(this);
             await dialog.ShowAsync();
             LoadProjects();
@@ -120,7 +206,7 @@ namespace ProjectManager.ViewModel
         {
             if (SelectedProject == null) return;
             NewProject = SelectedProject;
-            Users = await ObjectRepository.DataProvider.GetUsers();
+            LoadUsers();
             var dialog = new CreateProject(this)
             {
                 Title = "Projekt bearbeiten"
@@ -128,22 +214,19 @@ namespace ProjectManager.ViewModel
             await dialog.ShowAsync();
             LoadProjects();
         }
-
-
-        private void SaveProject(object obj)
+        private async void SaveProject(object obj)
         {
             if(NewProject.Id == 0)
             {
-                ObjectRepository.DataProvider.CreateProject(NewProject);
+                await ObjectRepository.DataProvider.CreateProject(NewProject);
             }
             else
             {
-                ObjectRepository.DataProvider.UpdateProject(NewProject);
+                var v = ObjectRepository.DataProvider.UpdateProject(NewProject);
+                Console.WriteLine(v.ToString());
             }
             LoadProjects();
         }
-
-
         private void DeleteProject(object obj)
         {
             if(SelectedProject == null) return;
@@ -154,13 +237,62 @@ namespace ProjectManager.ViewModel
             }
             LoadProjects(ProjectFilter);
         }
-
-
         private async void FilterProjects(object obj)
         {
-            Users = await ObjectRepository.DataProvider.GetUsers();
+            LoadUsers();
             await FilterDialog.ShowAsync();
             LoadProjects(ProjectFilter);
+        }
+        private async void CreateAssignmentC(object obj)
+        {
+            LoadUsers();
+            NewAssignment.AssignDate = DateTime.Now;
+            NewAssignment.Project = SelectedProject;
+            var dialog = new CreateAssignment(this);
+            await dialog.ShowAsync();
+            NewAssignment.AssignDate = DateTime.Now;
+        }
+        private async void EditAssignment(object obj)
+        {
+            NewAssignment = SelectedAssignment;
+            var dialog = new CreateAssignment(this)
+            {
+                Title = "Aufgabe bearbeiten"
+            };
+            await dialog.ShowAsync();
+        }
+        private async void SaveAssignment(object obj)
+        {
+            if(SelectedProject == null) return;
+            if (NewAssignment == null) return;
+            if(NewAssignment.Id != 0)
+            {
+                if(!await ObjectRepository.DataProvider.UpdateAssignment(NewAssignment))
+                {
+                    MessageBox.Show("Updaten der Aufgabe fehlgeschalgen");
+                }
+                else
+                {
+                    await ObjectRepository.NotificationService.AssignmentUpdated(NewAssignment);
+                }
+            }
+            else
+            {
+                if(!await ObjectRepository.DataProvider.CreateAssignment(NewAssignment))
+                {
+                    MessageBox.Show("Erstellen der Aufgabe fehlgeschalgen");
+                }
+                else
+                {
+                    await ObjectRepository.NotificationService.AssignmentCreated(NewAssignment);
+                }
+            }
+            NewAssignment = new Assignment();
+            LoadProjects();
+        }
+        private void DeleteAssignment(object obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

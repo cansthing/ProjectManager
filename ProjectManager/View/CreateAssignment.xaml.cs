@@ -1,7 +1,7 @@
-﻿using ProjectManager.Model;
+﻿using ModernWpf.Controls;
+using ProjectManager.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,18 +15,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ProjectManager
+namespace ProjectManager.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for CreateAssignment.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CreateAssignment : ContentDialog
     {
-        public MainWindow()
+        public CreateAssignment(ProjectsViewViewModel viewModel)
         {
-
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.ShowDialog();
+            DataContext = viewModel;
             InitializeComponent();
         }
     }

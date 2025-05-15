@@ -17,7 +17,10 @@ namespace ProjectManager.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
+        public bool CanCurrentUser
+        {
+            get => ObjectRepository.DataProvider.CurrentUser.IsAdmin;
+        }
         private UserControl userControl;
         public UserControl UserControl
         {

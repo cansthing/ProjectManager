@@ -27,7 +27,7 @@ namespace ProjectManager.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\josua\\ProjectManger." +
-            "mdf;Integrated Security=True;Connect Timeout=30")]
+            "mdf;Integrated Security=True;Connect Timeout=60;Max Pool Size=200;")]
         public string DBConnectionString {
             get {
                 return ((string)(this["DBConnectionString"]));
