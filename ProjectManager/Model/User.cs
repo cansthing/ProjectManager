@@ -24,7 +24,9 @@ namespace ProjectManager.Model
         public string Username { get; set; }
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
-        public ImageSource Image { get; set; }
+        public bool imageHasBeenSet = false;
+        private ImageSource imageSource;
+        public ImageSource Image { get => imageSource; set { if (value == imageSource) imageHasBeenSet = true; imageSource = value; } }
         public override string ToString()
         {
             return Fullname;

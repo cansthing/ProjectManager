@@ -33,8 +33,9 @@
                         <RowDefinition Height="20" />
                     </Grid.RowDefinitions>
                     <ContentControl x:Name="WindowContent" Background="Transparent"/>
+                    
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
-                        <ui:ProgressRing IsActive="True" Margin="2 0" Padding="2"/>
+                        <ui:ProgressRing IsActive="true" Margin="2 0" Padding="2"/>
                         <Label Content="Prozesse laufen im Hintergrund..."/>
                     </StackPanel>
                 </Grid>

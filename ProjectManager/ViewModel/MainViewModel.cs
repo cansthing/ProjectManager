@@ -21,6 +21,8 @@ namespace ProjectManager.ViewModel
         {
             get => ObjectRepository.DataProvider.CurrentUser.IsAdmin;
         }
+
+
         private UserControl userControl;
         public UserControl UserControl
         {

@@ -52,9 +52,8 @@ namespace ProjectManager.ViewModel
         }
 
         public ICommand CreateUserCommand => new MyICommand(CreateUser);
-        public ICommand AddUserCommand => new MyICommand(AddUser);
         public ICommand OpenEditUserCommand => new MyICommand(OpenEditUser);
-        public ICommand EditUserCommand => new MyICommand(EditUser);
+        public ICommand SaveUserCommand => new MyICommand(SaveUser);
         public ICommand DeleteUserCommand => new MyICommand(DeleteUser);
 
         public UserManagementViewModel()
@@ -74,24 +73,22 @@ namespace ProjectManager.ViewModel
             await dialog.ShowAsync();
             LoadUsers();
         }
-        private async void AddUser(object obj)
-        {
-            if (NewUser == new User()) return;
-            await ObjectRepository.DataProvider.CreateUser(NewUser);
-            LoadUsers();
-        }
         private async void OpenEditUser(object obj)
         {
             NewUser = SelectedUser;
             var dialog = new CreateUser(NewUser);
             dialog.Title = "Benutzer bearbeiten";
-            dialog.PrimaryButtonCommand = EditUserCommand;
             await dialog.ShowAsync();
             LoadUsers();
         }
-        private async void EditUser(object obj)
+        private async void SaveUser(object obj)
         {
-            await ObjectRepository.DataProvider.UpdateUser(NewUser);
+            if (NewUser == new User()) return;
+
+            if (NewUser.Id == 0)
+                await ObjectRepository.DataProvider.CreateUser(NewUser);
+            else
+                await ObjectRepository.DataProvider.UpdateUser(NewUser);
             LoadUsers();
         }
         private async void DeleteUser(object obj)

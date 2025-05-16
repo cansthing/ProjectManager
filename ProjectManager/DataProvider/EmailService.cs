@@ -60,7 +60,7 @@ namespace ProjectManager.DataProvider
             sb.Append(HtmlHelper.Assignment(assignment));
             sb.Append(HtmlHelper.CurrentAssignments(await ObjectRepository.DataProvider.GetAssignments(assignment.User)));
             sb.Append(HtmlHelper.Footer());
-            await Send(ObjectRepository.DataProvider.CurrentUser, "Projekt Manager : Aufgaben : Test", sb);
+            await Send(assignment.User, "Projekt Manager : Aufgaben : Test", sb);
             return true;
         }
 

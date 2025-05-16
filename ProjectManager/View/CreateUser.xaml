@@ -13,7 +13,7 @@
                   DefaultButton="Primary"
                   Title="Benutzer hinzufügen"
                   PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                  PrimaryButtonCommand="{Binding AddUserCommand}">
+                  PrimaryButtonCommand="{Binding SaveUserCommand}">
     <ui:ContentDialog.DataContext>
         <vm:UserManagementViewModel x:Name="VM"/>
     </ui:ContentDialog.DataContext>
