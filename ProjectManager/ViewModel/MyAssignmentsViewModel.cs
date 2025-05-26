@@ -36,9 +36,40 @@ namespace ProjectManager.ViewModel
         {
             get { return selectedAssignment; }
             set { selectedAssignment = value;
+                ObjectRepository.DataProvider.UpdateAssignment(value);
                 OnPropertyChanged();
             }
         }
+        private int selectedIndex = 0;
+        public int SelectedIndex
+        {
+            get { return selectedIndex; }
+            set { selectedIndex = value;
+                OnPropertyChanged();
+            }
+        }
+        public int ProgressPercent
+        {
+            get 
+            {
+                int value;
+                value = SelectedAssignment == null ? 0 : SelectedAssignment.ProgressPercent;
+                return value; 
+            }
+            set 
+            {
+                if(SelectedAssignment != null)
+                {
+                    SelectedAssignment.ProgressPercent = value;
+                }
+                ObjectRepository.DataProvider.UpdateAssignment(SelectedAssignment);
+                OnPropertyChanged();
+                LoadMyAssignments();
+                OnPropertyChanged();
+            }
+        }
+
+
 
         private AssignmentOrder order = AssignmentOrder.Priority;
         public AssignmentOrder AssignmentOrder
@@ -49,11 +80,8 @@ namespace ProjectManager.ViewModel
             }
         }
 
-
-
         public FilterAssignments FilterDialog { get; set; }
         public ICommand OrderAssignmentsCommand => new MyICommand(OrderAssignments);
-
 
 
         public MyAssignmentsViewModel()
@@ -63,7 +91,18 @@ namespace ProjectManager.ViewModel
         }
         public async void LoadMyAssignments()
         {
+            int selected;
+            selected = SelectedAssignment == null ? 0 : SelectedAssignment.Id;
+
             MyAssignments = await ObjectRepository.DataProvider.GetAssignments(ObjectRepository.DataProvider.CurrentUser);
+            for(int i=0;i<MyAssignments.Count;i++)
+            {
+                if(MyAssignments[i].Id == selected)
+                {
+                    SelectedIndex = i; break;
+                }
+            }
+
             await ObjectRepository.NotificationService.AllAssignments(MyAssignments);
         }
 

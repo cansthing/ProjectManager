@@ -28,6 +28,7 @@ namespace ProjectManager.ViewModel
         {
             get => ObjectRepository.DataProvider.CurrentUser.IsAdmin;
         }
+
         private ObservableCollection<Project> projects;
         public ObservableCollection<Project> Projects
         {
@@ -101,6 +102,7 @@ namespace ProjectManager.ViewModel
             }
         }
         public Array Priorities => Enum.GetValues(typeof(Priority));
+
         private Assignment selectedAssignment;
         public Assignment SelectedAssignment
         {
@@ -110,38 +112,7 @@ namespace ProjectManager.ViewModel
             }
         }
 
-        public int Progress
-        {
-            get
-            {
-                if (SelectedProject == null) return 0;
-                int S = 0;
-                int W = 0;
-                foreach (var ass in SelectedProject.Assignments)
-                {
-                    S += ass.ProgressPercent * PriorityToInt(ass.Priority.ToString());
-                    W += PriorityToInt(ass.Priority.ToString());
-                }
-                if (W != 0)
-                    return S / W;
-                return 0;
-            }
-
-        }
-        private int PriorityToInt(string priority)
-        {
-            switch (priority)
-            {
-                case "Hoch":
-                    return 3;
-                case "Mittel":
-                    return 2;
-                case "Niedrig":
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
+        
 
         public ICommand CreateProjectCommand  => new MyICommand(CreateProject);
         public ICommand EditProjectCommand => new MyICommand(EditProject);
@@ -162,6 +133,7 @@ namespace ProjectManager.ViewModel
             NewAssignment = new Assignment();
             LoadProjects();
         }
+
         private async void LoadProjects(ProjectFilter filter = ProjectFilter.No)
         {
             int index = SelectedProjectIndex;
@@ -292,7 +264,10 @@ namespace ProjectManager.ViewModel
         }
         private void DeleteAssignment(object obj)
         {
-            throw new NotImplementedException();
+            var selected = SelectedAssignment;
+            if (selected != null)
+                ObjectRepository.DataProvider.DeleteAssignment(selected);
+            LoadProjects();
         }
     }
 }

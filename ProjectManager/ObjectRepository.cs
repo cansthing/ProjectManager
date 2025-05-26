@@ -51,7 +51,7 @@ namespace ProjectManager
 
         static ObjectRepository()
         {
-            DataProvider = new RestDataProvider();
+            DataProvider = new SqlDataProvider();
             AppConfiguration = new AppConfiguration();
             NotificationService = new EmailService();
         }

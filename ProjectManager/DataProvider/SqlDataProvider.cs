@@ -18,7 +18,7 @@ using System.Windows.Navigation;
 
 namespace ProjectManager.DataProvider
 {
-    public class RestDataProvider : IDataProvider
+    public class SqlDataProvider : IDataProvider
     {
         private User currentUser;
         public User CurrentUser { get => currentUser; }
@@ -28,7 +28,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 user.Password = EncryptionHelper.EncryptString(user.Password);
-                string query = "INSERT INTO Users (Firstname, Lastname, Email, Phone, Username, Password, IsAdmin) VALUES (@Firstname, @Lastname, @Email, @Phone, @Username, @Password, @IsAdmin)";
+                string query = "INSERT INTO Users (Firstname, Lastname, Email, Phone, Username, Password, IsAdmin, Image) VALUES (@Firstname, @Lastname, @Email, @Phone, @Username, @Password, @IsAdmin, @Image)";
                 using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -54,10 +54,12 @@ namespace ProjectManager.DataProvider
         }
         public async Task<bool> UpdateUser(User user)
         {
-            try { 
-            bool mustUpdateCurrentUser = user.Id == CurrentUser.Id;
-            user.Password = EncryptionHelper.EncryptString(user.Password);
-            string query = "UPDATE Users SET Firstname = @Firstname, Lastname = @Lastname, Email = @Email, Phone = @Phone, Username = @Username, Password = @Password, IsAdmin = @IsAdmin WHERE Id = @Id";
+            try
+            {
+
+                bool mustUpdateCurrentUser = user.Id == CurrentUser.Id;
+                user.Password = EncryptionHelper.EncryptString(user.Password);
+                string query = "UPDATE Users SET Firstname = @Firstname, Lastname = @Lastname, Email = @Email, Phone = @Phone, Username = @Username, Password = @Password, IsAdmin = @IsAdmin, Image = @Image WHERE Id = @Id";
                 using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -77,11 +79,11 @@ namespace ProjectManager.DataProvider
                         currentUser = await GetUser(user.Id);
                     return a != 0;
                 }
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show("Fehler beim Aktualisieren des Benutzers: "+ex.Message);
+                MessageBox.Show("Fehler beim Aktualisieren des Benutzers: " + ex.Message);
                 return false;
             }
         }
@@ -203,11 +205,11 @@ namespace ProjectManager.DataProvider
                             Username = reader.IsDBNull(5) ? null : reader.GetString(5),
                             Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
                             IsAdmin = reader.GetBoolean(7),
-                            Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)
+                            Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)//,
+                            //imageHasBeenSet = false
                         };
                         fullUser = newuser;
                     }
-                    conn.Close();
                 }
                 return fullUser;
             }
@@ -241,11 +243,11 @@ namespace ProjectManager.DataProvider
                             Username = reader.IsDBNull(5) ? null : reader.GetString(5),
                             Password = reader.IsDBNull(6) ? null : EncryptionHelper.DecryptString(reader.GetString(6)),
                             IsAdmin = reader.GetBoolean(7),
-                            Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)
+                            Image = reader.IsDBNull(8) ? null : ImageHelper.ConvertToImageSource(reader.GetSqlBytes(8).Value)//,
+                            //imageHasBeenSet = false
                         };
                         fullUser = newuser;
                     }
-                    conn.Close();
                 }
                 return fullUser;
             }
@@ -257,6 +259,7 @@ namespace ProjectManager.DataProvider
         }
         public async Task<bool> CreateProject(Project project1)
         {
+            MakeSureProjectsTable();
             try
             {
                 string query = "INSERT INTO Projects (Title, Responsibility, Description) VALUES (@Title, @Responsibility, @Description)";
@@ -328,6 +331,7 @@ namespace ProjectManager.DataProvider
         }
         public async Task<ObservableCollection<Project>> GetProjects(ProjectFilter projectFilter, User user = null)
         {
+            MakeSureProjectsTable();
             try
             {
                 string query = "SELECT * FROM Projects ORDER BY Title ASC;";
@@ -447,7 +451,7 @@ namespace ProjectManager.DataProvider
         {
             try
             {
-                string query = "UPDATE Assignments SET Project = @Project, User = @User, Title = @Title, Description = @Description, DueDate = @DueDate, ProgressPercent = @ProgressPercent, Priority = @Priority WHERE Id = @Id";
+                string query = "UPDATE Assignments SET Project = @Project, [User] = @User, Title = @Title, Description = @Description, DueDate = @DueDate, ProgressPercent = @ProgressPercent, Priority = @Priority WHERE Id = @Id";
                 using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -455,7 +459,7 @@ namespace ProjectManager.DataProvider
                     cmd.Parameters.AddWithValue("@User", assignment.User.Id);
                     cmd.Parameters.AddWithValue("@Title", assignment.Title ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Description", assignment.Description ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@DueDate", assignment.DueDate == null ? (object)DBNull.Value : assignment.DueDate);
+                    cmd.Parameters.AddWithValue("@DueDate", assignment.DueDate == DateTime.MinValue ? (object)DBNull.Value : assignment.DueDate);
                     cmd.Parameters.AddWithValue("@ProgressPercent", assignment.ProgressPercent == 0 ? 0 : assignment.ProgressPercent);
                     cmd.Parameters.AddWithValue("@Priority", assignment.Priority.ToString() ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Id", assignment.Id);
@@ -474,7 +478,7 @@ namespace ProjectManager.DataProvider
         {
             try
             {
-                string query = "DELETE FORM Assignemnts WHERE Id = @Id";
+                string query = "DELETE FROM Assignments WHERE Id = @Id";
                 using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -532,19 +536,6 @@ namespace ProjectManager.DataProvider
                 return new ObservableCollection<Assignment>();
             }
         }
-        private async Task<Project> GetProjectSafely(int projectId)
-        {
-            return projectId > 0 ? await GetProject(projectId) : null;
-        }
-        private async Task<User> GetUserSafely(int userId)
-        {
-            return userId > 0 ? await GetUser(userId) : null;
-        }
-        private Priority ParsePriority(string priorityString)
-        {
-            return Enum.TryParse(priorityString, out Priority priority) ? priority : Priority.Hoch;
-        }
-
         public async Task<ObservableCollection<Assignment>> GetAssignments(User user, AssignmentFilter assignmentFilter = AssignmentFilter.No)
         {
             try
@@ -600,11 +591,37 @@ namespace ProjectManager.DataProvider
 
                 return assignments;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Fehler beim Laden der Aufgabe: " + ex.Message);
                 return new ObservableCollection<Assignment>();
             }
+        }
+        private async Task<Project> GetProjectSafely(int projectId)
+        {
+            return projectId > 0 ? await GetProject(projectId) : null;
+        }
+        private async Task<User> GetUserSafely(int userId)
+        {
+            return userId > 0 ? await GetUser(userId) : null;
+        }
+        private Priority ParsePriority(string priorityString)
+        {
+            return Enum.TryParse(priorityString, out Priority priority) ? priority : Priority.Hoch;
+        }
+        private void MakeSureProjectsTable()
+        {
+            string query = "CREATE TABLE [dbo].[Projects] ([Id] INT IDENTITY (1, 1) NOT NULL,[Title] VARCHAR (50)  NULL,[Responsibility] INT NULL,[Start] DATETIME DEFAULT (CONVERT([date],getdate())) NULL,[End] DATETIME NULL,[Description] VARCHAR (255) NULL,CONSTRAINT [PK_Projects] PRIMARY KEY CLUSTERED ([Id] ASC));";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                };
+            }
+            catch (Exception) { }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModernWpf.Controls;
+using ProjectManager.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,14 +18,14 @@ using System.Windows.Shapes;
 namespace ProjectManager.View
 {
     /// <summary>
-    /// Interaction logic for MyAssignmentsView.xaml
+    /// Interaction logic for ShowProject.xaml
     /// </summary>
-    public partial class MyAssignmentsView : UserControl
+    public partial class ShowProject : ContentDialog
     {
-        public MyAssignmentsView()
+        public ShowProject(Project project)
         {
             InitializeComponent();
-        }
 
+        }
     }
 }

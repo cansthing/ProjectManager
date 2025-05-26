@@ -49,6 +49,7 @@ namespace ProjectManager.DataProvider
         }
         public async Task<bool> IsValid(User user)
         {
+            await Task.Delay(0);
             return true;
         }
         public async Task<bool> AssignmentCreated(Assignment assignment)
@@ -66,6 +67,7 @@ namespace ProjectManager.DataProvider
 
         public async Task<bool> AssignmentDeleted(Assignment assignment)
         {
+            await Task.Delay(0);
             return false;
         }
 

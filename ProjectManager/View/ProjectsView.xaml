@@ -65,7 +65,7 @@
                 <Label Content="{Binding SelectedProject.Title}" FontSize="24"
                        Grid.Column="0" Grid.ColumnSpan="3"/>
                 
-                <ui:ProgressBar Value="{Binding Progress, Mode=OneWay}" Grid.Column="2" Grid.ColumnSpan="2"/>
+                <ui:ProgressBar Value="{Binding SelectedProject.Progress, Mode=OneWay}" Grid.Column="2" Grid.ColumnSpan="2"/>
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
                         <Run Text="Beginn: "/>
@@ -91,7 +91,8 @@
                             <ui:AppBarButton Icon="Delete" Command="{Binding DeleteAssignmentCommand}"/>
                             <ui:AppBarButton Icon="Sort"/>
                         </ui:CommandBar>
-                        <ui:ListView Grid.Row="1" ItemsSource="{Binding SelectedProject.Assignments}">
+                        <ui:ListView Grid.Row="1" ItemsSource="{Binding SelectedProject.Assignments}"
+                                     SelectedItem="{Binding SelectedAssignment}">
                             
                         </ui:ListView>
                     </Grid>

@@ -12,6 +12,7 @@
     <UserControl.DataContext>
         <vm:MyAssignmentsViewModel x:Name="ViewModel"/>
     </UserControl.DataContext>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -22,12 +23,15 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <ui:CommandBar>
-            <ui:AppBarButton Icon="Sort" Command="{Binding AssignmentOrder}"/>
+            <ui:AppBarButton Icon="Sort" Command="{Binding AssignmentOrder}"
+                             Grid.Row="0"/>
         </ui:CommandBar>
         <ui:ListView ItemsSource="{Binding MyAssignments}"
                      SelectedItem="{Binding SelectedAssignment}"
+                     SelectedIndex="{Binding SelectedIndex}"
                      Grid.Row="1">
-
         </ui:ListView>
+        <local:AssignmentView Assignment="{Binding SelectedAssignment}"
+                              Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"/>
     </Grid>
 </UserControl>
