@@ -96,6 +96,9 @@
     </ApplicationDefinition>
     <Compile Include="AppConfiguration.cs" />
     <Compile Include="Commands\MyICommand.cs" />
+    <Compile Include="Controls\AssignmentListViewItem.xaml.cs">
+      <DependentUpon>AssignmentListViewItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converter\SelectionToBool.cs" />
     <Compile Include="DataProvider\EmailService.cs" />
     <Compile Include="DataProvider\ISendNotification.cs" />
@@ -155,6 +158,10 @@
     <Compile Include="View\UserManagement.xaml.cs">
       <DependentUpon>UserManagement.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\AssignmentListViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LoginWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -248,7 +255,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
@@ -259,6 +266,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Properties\DBCS.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="SplashScreen1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

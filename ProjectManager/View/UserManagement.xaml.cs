@@ -24,10 +24,8 @@ namespace ProjectManager.View
     {
         public UserManagement()
         {
-            //UserManagementViewModel viewModel = new UserManagementViewModel();
-            //this.DataContext = viewModel;
             InitializeComponent();
-            //VM.LoadUsers();
+            VM.LoadUsers();
         }
     }
 }

@@ -13,6 +13,9 @@
         WindowStyle="None" Topmost="True"
         Background="Transparent"
         FocusManager.FocusedElement="{Binding ElementName=tb_username}">
+    <Window.InputBindings>
+        <KeyBinding Key="F4" Modifiers="Alt" x:Name="keyf4"/>
+    </Window.InputBindings>
     <Window.DataContext>
         <vm:LoginWindowViewModel x:Name="LoginViewModel"/>
     </Window.DataContext>

@@ -23,7 +23,7 @@
             <ui:RadioButtons Name="radioButtons" >
                 <RadioButton Content="Alle Projekte" IsChecked="True" GroupName="filter"/>
                 <RadioButton Content="Meine Projekte" GroupName="filter"/>
-                <RadioButton GroupName="filter">
+                <RadioButton GroupName="filter" >
                     <RadioButton.Content>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="5">
                             <Label Content="Projekte von " VerticalAlignment="Center" />

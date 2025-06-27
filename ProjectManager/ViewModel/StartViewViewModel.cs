@@ -38,7 +38,7 @@ namespace ProjectManager.ViewModel
         private int LoadAssignmentCount()
         {
             string query = $"SELECT COUNT(*) FROM Assignments WHERE [User]={ObjectRepository.DataProvider.CurrentUser.Id} AND ProgressPercent < 100;";
-            using(SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+            using(SqlConnection conn = new SqlConnection(App.DBConnectionString))
             using(SqlCommand cmd = new SqlCommand(query, conn))
             {
                 conn.Open();

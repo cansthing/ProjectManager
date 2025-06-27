@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProjectManager.Commands;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace ProjectManager
         public LoginWindow()
         {
             InitializeComponent();
+            keyf4.Command = new MyICommand(Exit);
         }
 
         private async void btn_Login_Click(object sender, RoutedEventArgs e)
@@ -54,19 +56,16 @@ namespace ProjectManager
             else
             {
                 MessageText.Visibility = Visibility.Visible;
-                await Task.Delay(1500);
+                await Task.Delay(3000);
                 MessageText.Visibility = Visibility.Collapsed;
             }
 
             LoginViewModel.IsBusy = false;
         }
-
-        private async void DataFalse()
+        private void Exit(object obj)
         {
-
-            MessageText.Visibility = Visibility.Visible;
-            await Task.Delay(1500);
-            MessageText.Visibility = Visibility.Collapsed;
+            this.Close();
+            Application.Current.Shutdown();
         }
     }
 }

@@ -8,11 +8,11 @@
              d:DesignHeight="450" d:DesignWidth="800"
              xmlns:vm="clr-namespace:ProjectManager.ViewModel"
              xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:controls="clr-namespace:ProjectManager.Controls"
              d:DataContext="{d:DesignInstance Type=vm:MyAssignmentsViewModel}">
     <UserControl.DataContext>
         <vm:MyAssignmentsViewModel x:Name="ViewModel"/>
     </UserControl.DataContext>
-    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -23,13 +23,34 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <ui:CommandBar>
-            <ui:AppBarButton Icon="Sort" Command="{Binding AssignmentOrder}"
+            <ui:AppBarButton Icon="Sort" Command="{Binding OrderAssignmentsCommand}"
                              Grid.Row="0"/>
         </ui:CommandBar>
         <ui:ListView ItemsSource="{Binding MyAssignments}"
                      SelectedItem="{Binding SelectedAssignment}"
-                     SelectedIndex="{Binding SelectedIndex}"
+                     SelectedIndex="{Binding SelectedAssignmentIndex}"
                      Grid.Row="1">
+            <ui:ListView.ItemContainerStyle>
+                <Style TargetType="ui:ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ui:ListView.ItemContainerStyle>
+            <ui:ListView.ItemTemplate>
+                <DataTemplate>
+                    <controls:AssignmentListViewItem Assignment="{Binding}"/>
+                </DataTemplate>
+            </ui:ListView.ItemTemplate>
+            <ui:ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <Border Padding="5" CornerRadius="5" Margin="0,5,0,0">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" Foreground="Black"/>
+                            </Border>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ui:ListView.GroupStyle>
         </ui:ListView>
         <local:AssignmentView Assignment="{Binding SelectedAssignment}"
                               Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"/>

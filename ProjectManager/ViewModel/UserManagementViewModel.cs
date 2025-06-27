@@ -78,7 +78,7 @@ namespace ProjectManager.ViewModel
             NewUser = SelectedUser;
             var dialog = new CreateUser(NewUser);
             dialog.Title = "Benutzer bearbeiten";
-            await Task.Run(async () => { await dialog.ShowAsync(); });
+            await dialog.ShowAsync();
             LoadUsers();
         }
         private async void SaveUser(object obj)

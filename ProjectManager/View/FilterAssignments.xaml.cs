@@ -22,10 +22,12 @@ namespace ProjectManager.View
     /// </summary>
     public partial class FilterAssignments : ContentDialog
     {
+        private MyAssignmentsViewModel ViewModel;
         public FilterAssignments(MyAssignmentsViewModel viewModel)
         {
-            DataContext = viewModel;
             InitializeComponent();
+            DataContext = viewModel;
+            ViewModel = viewModel;
         }
         public FilterAssignments(ProjectsViewViewModel viewModel)
         {
@@ -35,12 +37,17 @@ namespace ProjectManager.View
 
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            MessageBox.Show((sender as RadioButtons).SelectedItem.ToString());
+            int index = (sender as RadioButtons).SelectedIndex;
+
             if (DataContext is MyAssignmentsViewModel)
             {
-                switch ((sender as RadioButtons).SelectedItem.ToString())
+                switch (index)
                 {
-                    case "":
+                    case 0:
+                        ViewModel.AssignmentOrder = DataProvider.AssignmentOrder.Priority;
+                        break;
+                    case 1:
+                        ViewModel.AssignmentOrder = DataProvider.AssignmentOrder.Project;
                         break;
                     default:
                         break;

@@ -106,7 +106,7 @@
 
         <Border Style="{StaticResource borderStyle}" Grid.Row="4">
             <GroupBox Header="Fortschritt">
-                <StackPanel>
+                <ui:SimpleStackPanel Margin="0 -15 0 0">
                     <TextBlock HorizontalAlignment="Center">
                         <Run Text="{Binding Assignment.ProgressPercent, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                         <Run Text="%"/>
@@ -114,9 +114,9 @@
                     <Slider Value="{Binding Assignment.ProgressPercent, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Maximum="100" TickPlacement="TopLeft" TickFrequency="5" 
                             IsSnapToTickEnabled="True"
-                            x:Name="slider"/>
+                            x:Name="slider" Margin="10 2 10 -15"/>
                     <TextBlock Name="tb_progressChanged"/>
-                </StackPanel>
+                </ui:SimpleStackPanel>
             </GroupBox>
         </Border>
     </Grid>

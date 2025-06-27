@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjectManager.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             xmlns:ui="http://schemas.modernwpf.com/2019">
     <Grid>
         <TabControl Style="{StaticResource TabControlPivotStyle}">
             <TabItem Header="Oberfläche">
@@ -15,5 +16,6 @@
                 <local:UserManagement/>
             </TabItem>
         </TabControl>
+        
     </Grid>
 </UserControl>

@@ -26,8 +26,12 @@ namespace ProjectManager.View
 		{
 			InitializeComponent();
 		}
-
-		private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+		UserControl StartView = new StartView();
+		UserControl ProjectsView = new ProjectsView();
+		UserControl MyAssignmentsView = new MyAssignmentsView();
+		UserControl MyAccountView = new MyAccountView();
+		UserControl SettingsView = new SettingsView();
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
 		{
 			string content = (sender.SelectedItem as NavigationViewItem).Tag?.ToString();
 			if (string.IsNullOrEmpty(content)) return;
@@ -35,27 +39,27 @@ namespace ProjectManager.View
 			{
 				case "Start":
 					sender.Header = "Projektmanager";
-					NavigateTo(new StartView());
+					NavigateTo(StartView);
 					break;
 				case "Projects":
 					sender.Header = "Projekte";
-                    NavigateTo(new ProjectsView());
+                    NavigateTo(ProjectsView);
 					break;
 				case "ToDos":
 					sender.Header = "Meine Aufgaben";
-                    NavigateTo(new MyAssignmentsView());
+                    NavigateTo(MyAssignmentsView);
 					break;
 				case "OwnAccount":
 					sender.Header = "Accounteinstellungen";
-                    NavigateTo(new MyAccountView());
+                    NavigateTo(MyAccountView);
 					break;
 				case "Settings":
 					sender.Header = "Einstellungen";
-					NavigateTo(new SettingsView());
+					NavigateTo(SettingsView);
                     break;
 				default:
 					sender.Header = "Projektmanager";
-					NavigateTo(new StartView());
+					NavigateTo(StartView);
 					break;
 			}
 		}

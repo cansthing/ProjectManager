@@ -29,7 +29,7 @@ namespace ProjectManager.DataProvider
             {
                 user.Password = EncryptionHelper.EncryptString(user.Password);
                 string query = "INSERT INTO Users (Firstname, Lastname, Email, Phone, Username, Password, IsAdmin, Image) VALUES (@Firstname, @Lastname, @Email, @Phone, @Username, @Password, @IsAdmin, @Image)";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Firstname", (object)user.Firstname ?? DBNull.Value);
@@ -56,11 +56,10 @@ namespace ProjectManager.DataProvider
         {
             try
             {
-
                 bool mustUpdateCurrentUser = user.Id == CurrentUser.Id;
                 user.Password = EncryptionHelper.EncryptString(user.Password);
                 string query = "UPDATE Users SET Firstname = @Firstname, Lastname = @Lastname, Email = @Email, Phone = @Phone, Username = @Username, Password = @Password, IsAdmin = @IsAdmin, Image = @Image WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("Id", (object)user.Id);
@@ -92,7 +91,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = $"DELETE FROM Users WHERE Id = {user.Id}";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -129,7 +128,7 @@ namespace ProjectManager.DataProvider
                         break;
                 }
 
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -188,7 +187,7 @@ namespace ProjectManager.DataProvider
                 User fullUser = null;
                 string query = $"SELECT * FROM Users WHERE Username = '{user.Username}'";
 
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -226,7 +225,7 @@ namespace ProjectManager.DataProvider
                 User fullUser = null;
                 string query = $"SELECT * FROM Users WHERE Id = '{id}'";
 
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -263,7 +262,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = "INSERT INTO Projects (Title, Responsibility, Description) VALUES (@Title, @Responsibility, @Description)";
-                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Title", (object)project1.Title);
@@ -286,7 +285,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = $"UPDATE Projects SET [Title] = @Title, Responsibility = @Responsibility, [End] = @End, [Description] = @Description WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", (object)project.Id);
@@ -310,7 +309,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = $"DELETE FROM Projects WHERE Id = '{project.Id}'";
-                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -351,7 +350,7 @@ namespace ProjectManager.DataProvider
 
                 ObservableCollection<Project> projects = new ObservableCollection<Project>();
 
-                using (SqlConnection conn = new SqlConnection(Properties.Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     await conn.OpenAsync();
@@ -385,7 +384,7 @@ namespace ProjectManager.DataProvider
             string query = $"SELECT * FROM Projects WHERE Id = @id ORDER BY Title ASC;";
             try
             {
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
@@ -426,7 +425,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = "INSERT INTO Assignments (Project, [User], Title, Description, DueDate, ProgressPercent, Priority) VALUES (@Project, @User, @Title, @Description, @DueDate, @ProgressPercent, @Priority);";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Project", assignment.Project.Id);
@@ -452,7 +451,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = "UPDATE Assignments SET Project = @Project, [User] = @User, Title = @Title, Description = @Description, DueDate = @DueDate, ProgressPercent = @ProgressPercent, Priority = @Priority WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Project", assignment.Project.Id);
@@ -470,7 +469,7 @@ namespace ProjectManager.DataProvider
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Fehler beim Aktualiseren der Aufgabe: "+ex.Message);
+                MessageBox.Show("Fehler beim Aktualiseren der Aufgabe: " + ex.Message);
                 return false;
             }
         }
@@ -479,7 +478,7 @@ namespace ProjectManager.DataProvider
             try
             {
                 string query = "DELETE FROM Assignments WHERE Id = @Id";
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", assignment.Id);
@@ -500,7 +499,7 @@ namespace ProjectManager.DataProvider
                 string query = "SELECT * FROM Assignments WHERE Project = @ProjectId";
                 ObservableCollection<Assignment> assignments = new ObservableCollection<Assignment>();
 
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@ProjectId", project.Id);
@@ -549,7 +548,7 @@ namespace ProjectManager.DataProvider
 
                 ObservableCollection<Assignment> assignments = new ObservableCollection<Assignment>();
 
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@UserId", user.Id);
@@ -607,14 +606,25 @@ namespace ProjectManager.DataProvider
         }
         private Priority ParsePriority(string priorityString)
         {
-            return Enum.TryParse(priorityString, out Priority priority) ? priority : Priority.Hoch;
+            switch (priorityString)
+            {
+                case "Hoch":
+                    return Priority.Hoch;
+                case "Mittel":
+                    return Priority.Mittel;
+                case "Niedrig":
+                    return Priority.Niedrig;
+                default:
+                    return Priority.Mittel;
+            }
+            //return Enum.TryParse(priorityString, out Priority priority) ? priority : Priority.Hoch;
         }
         private void MakeSureProjectsTable()
         {
             string query = "CREATE TABLE [dbo].[Projects] ([Id] INT IDENTITY (1, 1) NOT NULL,[Title] VARCHAR (50)  NULL,[Responsibility] INT NULL,[Start] DATETIME DEFAULT (CONVERT([date],getdate())) NULL,[End] DATETIME NULL,[Description] VARCHAR (255) NULL,CONSTRAINT [PK_Projects] PRIMARY KEY CLUSTERED ([Id] ASC));";
             try
             {
-                using (SqlConnection conn = new SqlConnection(Settings.Default.DBConnectionString))
+                using (SqlConnection conn = new SqlConnection(App.DBConnectionString))
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     conn.Open();

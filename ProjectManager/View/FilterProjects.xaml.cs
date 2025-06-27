@@ -39,7 +39,7 @@ namespace ProjectManager.View
         {
             switch (radioButtons.SelectedIndex)
             {
-                case 9:
+                case 0:
                     ViewModel.ProjectFilter = ProjectFilter.No;
                     break;
                 case 1:

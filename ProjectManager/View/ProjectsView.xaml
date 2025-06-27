@@ -24,10 +24,10 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <ui:CommandBar Grid.Row="0" Grid.Column="0">
-            <ui:AppBarButton Icon="Add" Command="{Binding CreateProjectCommand}"/>
-            <ui:AppBarButton Icon="Edit" Command="{Binding EditProjectCommand}"/>
-            <ui:AppBarButton Icon="Delete" Command="{Binding DeleteProjectCommand}"/>
-            <ui:AppBarButton Icon="Filter" Command="{Binding FilterProjectsCommand}"/>
+            <ui:AppBarButton Icon="Add" Command="{Binding CreateProjectCommand}" Label="Neu"/>
+            <ui:AppBarButton Icon="Edit" Command="{Binding EditProjectCommand}" Label="Bearbeiten"/>
+            <ui:AppBarButton Icon="Delete" Command="{Binding DeleteProjectCommand}" Label="Löschen"/>
+            <ui:AppBarButton Icon="Filter" Command="{Binding FilterProjectsCommand}" Label="Projekte Filtern"/>
         </ui:CommandBar>
         <ui:ListView Grid.Row="2" ItemsSource="{Binding Projects}"
                           d:ItemsSource="{d:SampleData ItemCount=2}"
@@ -68,10 +68,10 @@
                 <ui:ProgressBar Value="{Binding SelectedProject.Progress, Mode=OneWay}" Grid.Column="2" Grid.ColumnSpan="2"/>
 
                 <TextBlock Grid.Row="1" Grid.ColumnSpan="3">
-                        <Run Text="Beginn: "/>
-                        <Run Text="{Binding SelectedProject.Start}"/>
+                        <Run Text="Beginn:"/>
+                        <Run Text="{Binding SelectedProject.Start, StringFormat='{}{0:dd.MM.yyyy}'}"/>
                         <LineBreak/>
-                        <Run Text="Verantwortlich: "/>
+                        <Run Text="Verantwortlich:"/>
                         <Run Text="{Binding SelectedProject.Responsibility.Fullname, Mode=OneWay}"/>
                 </TextBlock>
                 <TextBlock Text="{Binding SelectedProject.Description}"

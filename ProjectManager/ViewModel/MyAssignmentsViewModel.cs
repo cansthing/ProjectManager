@@ -10,6 +10,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ProjectManager.ViewModel
@@ -36,15 +38,16 @@ namespace ProjectManager.ViewModel
         {
             get { return selectedAssignment; }
             set { selectedAssignment = value;
-                ObjectRepository.DataProvider.UpdateAssignment(value);
+                if (value != null) ObjectRepository.DataProvider.UpdateAssignment(value);
                 OnPropertyChanged();
             }
         }
-        private int selectedIndex = 0;
-        public int SelectedIndex
+
+        private int selectedAssignmentIndex = 0;
+        public int SelectedAssignmentIndex
         {
-            get { return selectedIndex; }
-            set { selectedIndex = value;
+            get { return selectedAssignmentIndex; }
+            set { selectedAssignmentIndex = value;
                 OnPropertyChanged();
             }
         }
@@ -91,23 +94,57 @@ namespace ProjectManager.ViewModel
         }
         public async void LoadMyAssignments()
         {
-            int selected;
-            selected = SelectedAssignment == null ? 0 : SelectedAssignment.Id;
-
+            Assignment selected = SelectedAssignment == null ? new Assignment() { Id=0} : SelectedAssignment;
+            int index = SelectedAssignmentIndex;
             MyAssignments = await ObjectRepository.DataProvider.GetAssignments(ObjectRepository.DataProvider.CurrentUser);
-            for(int i=0;i<MyAssignments.Count;i++)
+
+            int newIndex = 0;
+            for (int i = 0; i < MyAssignments.Count; i++)
             {
-                if(MyAssignments[i].Id == selected)
+                if (MyAssignments[i].Id == selected.Id)
                 {
-                    SelectedIndex = i; break;
+                    newIndex = i;
                 }
             }
+            SelectedAssignmentIndex = newIndex;
 
             await ObjectRepository.NotificationService.AllAssignments(MyAssignments);
+
+
+
+
+
+            var view = CollectionViewSource.GetDefaultView(MyAssignments) as ICollectionView;
+
+            if (view == null) return;
+
+            view.GroupDescriptions.Clear();
+            string filter = "";
+            switch (AssignmentOrder)
+            {
+                case AssignmentOrder.Project:
+                    filter = "Project.Title";
+                    break;
+                case AssignmentOrder.Priority:
+                    filter = "Priority";
+                    break;
+                default:
+                    break;
+            }
+
+            if (filter == "kein Filter")
+            {
+                view.Refresh();
+                return;
+            }
+
+            view.GroupDescriptions.Add(new PropertyGroupDescription(filter));
+            view.Refresh();
         }
 
         private async void OrderAssignments(object obj)
         {
+            MessageBox.Show("Button wurde geklickt.");
             await FilterDialog.ShowAsync();
             LoadMyAssignments();
         }
